@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import config from 'app/core/config';
 import Page from 'app/core/components/Page/Page';
 import TeamMembers from './TeamMembers';
+import TeamPermissions from './TeamPermissions';
 import TeamSettings from './TeamSettings';
 import TeamGroupSync from './TeamGroupSync';
 import { StoreState } from 'app/types';
@@ -80,7 +81,10 @@ export class TeamPages extends PureComponent<Props, State> {
     const { loadTeam, teamId } = this.props;
     this.setState({ isLoading: true });
     const team = await loadTeam(teamId);
-    await this.props.loadTeamMembers();
+    // TODO see if we can do something better
+    if (!contextSrv.accessControlEnabled()) {
+      await this.props.loadTeamMembers();
+    }
     this.setState({ isLoading: false });
     return team;
   }
@@ -122,8 +126,11 @@ export class TeamPages extends PureComponent<Props, State> {
 
     switch (currentPage) {
       case PageTypes.Members:
-        return <TeamMembers syncEnabled={isSyncEnabled} members={members} />;
-
+        if (config.featureToggles['accesscontrol']) {
+          return <TeamPermissions team={team!} />;
+        } else {
+          return <TeamMembers syncEnabled={isSyncEnabled} members={members} />;
+        }
       case PageTypes.Settings:
         return isSignedInUserTeamAdmin && <TeamSettings team={team!} />;
       case PageTypes.GroupSync:
