@@ -84,7 +84,7 @@ type TeamDTO struct {
 	AvatarUrl     string          `json:"avatarUrl"`
 	MemberCount   int64           `json:"memberCount"`
 	Permission    PermissionType  `json:"permission"`
-	AccessControl map[string]bool `json:"accesscontrol"`
+	AccessControl map[string]bool `json:"accessControl"`
 }
 
 type SearchTeamQueryResult struct {
