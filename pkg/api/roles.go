@@ -31,6 +31,8 @@ const (
 	ActionTeamsWrite            = "teams:write"
 	ActionTeamsPermissionsRead  = "teams.permissions:read"
 	ActionTeamsPermissionsWrite = "teams.permissions:write"
+	ActionTeamsPreferencesRead  = "teams.preferences:read"
+	ActionTeamsPreferencesWrite = "teams.preferences:write"
 )
 
 // API related scopes
@@ -266,4 +268,15 @@ var orgsAccessEvaluator = accesscontrol.EvalPermission(ActionOrgsRead)
 var orgsCreateAccessEvaluator = accesscontrol.EvalAll(
 	accesscontrol.EvalPermission(ActionOrgsRead),
 	accesscontrol.EvalPermission(ActionOrgsCreate),
+)
+
+// TODO check with mitch if that's what we want
+// teamsAccessEvaluator is used to protect the "Configuration > Teams" page access
+var teamsAccessEvaluator = accesscontrol.EvalAll(
+	accesscontrol.EvalPermission(ActionTeamsRead),
+	accesscontrol.EvalAny(
+		accesscontrol.EvalPermission(ActionTeamsWrite),
+		accesscontrol.EvalPermission(ActionTeamsPermissionsWrite),
+		accesscontrol.EvalPermission(ActionTeamsPreferencesWrite),
+	),
 )
