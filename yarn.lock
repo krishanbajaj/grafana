@@ -4138,7 +4138,7 @@ __metadata:
     react-dom: 17.0.2
     react-dropzone: 11.5.1
     react-highlight-words: 0.17.0
-    react-hook-form: 7.5.3
+    react-hook-form: 7.24.0
     react-inlinesvg: 2.3.0
     react-popper: 2.2.5
     react-router-dom: ^5.2.0
@@ -19942,7 +19942,7 @@ __metadata:
     react-draggable: 4.4.4
     react-grid-layout: 1.3.0
     react-highlight-words: 0.17.0
-    react-hook-form: 7.5.3
+    react-hook-form: 7.24.0
     react-inlinesvg: 2.3.0
     react-loadable: 5.5.0
     react-moveable: 0.30.3
@@ -29795,6 +29795,15 @@ __metadata:
   peerDependencies:
     react: ^0.14.0 || ^15.0.0 || ^16.0.0-0 || ^17.0.0-0
   checksum: 41b3d0e4516cbc12fd4e0b620b72d309eaa3e207f1089a377d76040f99edb717b99a34e0bef5f83d7d28d408542f3138ca3a5c06e08359e4f13f241432327485
+  languageName: node
+  linkType: hard
+
+"react-hook-form@npm:7.24.0":
+  version: 7.24.0
+  resolution: "react-hook-form@npm:7.24.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17
+  checksum: 6df7b33c7e8023fadd7cf7415f975497d55866b0d5ae32f9735def3e2c7eb1455989f997e726b84e878d895e8ae0901db337f78eb9bb8edc3a146b7858b7d805
   languageName: node
   linkType: hard
 
