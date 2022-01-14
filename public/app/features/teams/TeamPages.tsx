@@ -35,25 +35,25 @@ enum PageTypes {
   GroupSync = 'groupsync',
 }
 
-const filterPagesWithAccessControl = (team: Team | null) => {
-  let res: PageTypes[] = [];
-  if (team) {
-    if (!contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsWrite, team)) {
-      res.push(PageTypes.Members);
-    }
-    if (
-      !(
-        contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsWrite, team) ||
-        contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPreferencesWrite, team)
-      )
-    ) {
-      res.push(PageTypes.Settings);
-    }
-    // TODO cover with FGAC
-    res.push(PageTypes.GroupSync);
-  }
-  return res;
-};
+// const filterPagesWithAccessControl = (team: Team | null) => {
+//   let res: PageTypes[] = [];
+//   if (team) {
+//     if (!contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsWrite, team)) {
+//       res.push(PageTypes.Members);
+//     }
+//     if (
+//       !(
+//         contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsWrite, team) ||
+//         contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPreferencesWrite, team)
+//       )
+//     ) {
+//       res.push(PageTypes.Settings);
+//     }
+//     // TODO cover with FGAC
+//     res.push(PageTypes.GroupSync);
+//   }
+//   return res;
+// };
 
 function mapStateToProps(state: StoreState, props: OwnProps) {
   const teamId = parseInt(props.match.params.id, 10);
@@ -110,7 +110,8 @@ export class TeamPages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = filterPagesWithAccessControl(this.props.team);
+    // const pages = filterPagesWithAccessControl(this.props.team);
+    const pages = ['members', 'settings', 'groupsync'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -127,43 +128,43 @@ export class TeamPages extends PureComponent<Props, State> {
     return text1.toLocaleLowerCase() === text2.toLocaleLowerCase();
   };
 
-  hideTabByType = (navModel: NavModel, pageType: string) => {
-    if (navModel.main && navModel.main.children) {
-      navModel.main.children
-        .filter((navItem) => this.textsAreEqual(navItem.text, pageType))
-        .map((navItem) => {
-          navItem.hideFromTabs = true;
-        });
-    }
-    return navModel;
-  };
+  // hideTabByType = (navModel: NavModel, pageType: string) => {
+  //   if (navModel.main && navModel.main.children) {
+  //     navModel.main.children
+  //       .filter((navItem) => this.textsAreEqual(navItem.text, pageType))
+  //       .map((navItem) => {
+  //         navItem.hideFromTabs = true;
+  //       });
+  //   }
+  //   return navModel;
+  // };
 
-  hideTabsBasedOnAccessControl = (navModel: NavModel) => {
-    if (this.props.team) {
-      console.log(this.props);
-      console.log(this.props.team);
-      if (!contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsWrite, this.props.team)) {
-        navModel = this.hideTabByType(navModel, PageTypes.Members);
-      }
-      if (
-        !(
-          contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsWrite, this.props.team) ||
-          contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPreferencesWrite, this.props.team)
-        )
-      ) {
-        navModel = this.hideTabByType(navModel, PageTypes.Settings);
-      }
-    }
-    return navModel;
-  };
+  // hideTabsBasedOnAccessControl = (navModel: NavModel) => {
+  //   if (this.props.team) {
+  //     console.log(this.props);
+  //     console.log(this.props.team);
+  //     if (!contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsWrite, this.props.team)) {
+  //       navModel = this.hideTabByType(navModel, PageTypes.Members);
+  //     }
+  //     if (
+  //       !(
+  //         contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsWrite, this.props.team) ||
+  //         contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPreferencesWrite, this.props.team)
+  //       )
+  //     ) {
+  //       navModel = this.hideTabByType(navModel, PageTypes.Settings);
+  //     }
+  //   }
+  //   return navModel;
+  // };
 
-  retrictTabs = (navModel: NavModel, isSignedInUserTeamAdmin: boolean) => {
-    if (contextSrv.accessControlEnabled()) {
-      return this.hideTabsBasedOnAccessControl(navModel);
-    } else {
-      return this.hideTabsFromNonTeamAdmin(navModel, isSignedInUserTeamAdmin);
-    }
-  };
+  // retrictTabs = (navModel: NavModel, isSignedInUserTeamAdmin: boolean) => {
+  //   if (contextSrv.accessControlEnabled()) {
+  //     return this.hideTabsBasedOnAccessControl(navModel);
+  //   } else {
+  //     return this.hideTabsFromNonTeamAdmin(navModel, isSignedInUserTeamAdmin);
+  //   }
+  // };
 
   hideTabsFromNonTeamAdmin = (navModel: NavModel, isSignedInUserTeamAdmin: boolean) => {
     if (!isSignedInUserTeamAdmin && navModel.main && navModel.main.children) {
@@ -203,7 +204,7 @@ export class TeamPages extends PureComponent<Props, State> {
     const isTeamAdmin = isSignedInUserTeamAdmin({ members, editorsCanAdmin, signedInUser });
 
     return (
-      <Page navModel={this.retrictTabs(navModel, isTeamAdmin)}>
+      <Page navModel={this.hideTabsFromNonTeamAdmin(navModel, isTeamAdmin)}>
         <Page.Contents isLoading={this.state.isLoading}>
           {team && Object.keys(team).length !== 0 && this.renderPage(isTeamAdmin)}
         </Page.Contents>
