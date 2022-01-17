@@ -1,24 +1,22 @@
 #!/usr/bin/env bash
 
-# Find existing packages using Lerna
-PACKAGES=$(lerna list -p -l)
+# Find package directories
+PACKAGES=($(ls -d ./packages/*/))
 EXIT_CODE=0
 GITHUB_MESSAGE=""
 
 # Loop through the packages
-while IFS= read -r line; do
+for package in "${PACKAGES[@]}"; do
 
     # Read package info
-    IFS=':' read -ra ADDR <<< "$line"
-    PACKAGE_PATH="${ADDR[0]}"
-    PACKAGE_NAME="${ADDR[1]}"
+    PACKAGE_PATH=$(basename "$package")
 
     # Calculate current and previous package paths / names
     PREV="./main/$PACKAGE_PATH/dist/"
     CURRENT="./pr/$PACKAGE_PATH/dist/"
 
     # Temporarily skipping @grafana/toolkit, as it doesn't have any exposed static typing
-    if [[ "$PACKAGE_NAME" == '@grafana/toolkit' ]]; then
+    if [[ "$PACKAGE_PATH" == 'grafana-toolkit' ]]; then
         continue
     fi
 
@@ -26,7 +24,7 @@ while IFS= read -r line; do
     # Run the comparison and record the exit code
     echo ""
     echo ""
-    echo "${PACKAGE_NAME}"
+    echo "${PACKAGE_PATH}"
     echo "================================================="
     npm exec -- @grafana/levitate compare --prev "$PREV" --current "$CURRENT"
 
@@ -39,7 +37,7 @@ while IFS= read -r line; do
     if [ $STATUS -gt 0 ]
     then
         EXIT_CODE=1
-        GITHUB_MESSAGE="${GITHUB_MESSAGE}**\\\`${PACKAGE_NAME}\\\`** has possible breaking changes ([more info](${GITHUB_JOB_LINK}#step:${GITHUB_STEP_NUMBER}:1))<br />"    
+        GITHUB_MESSAGE="${GITHUB_MESSAGE}**\\\`${PACKAGE_PATH}\\\`** has possible breaking changes ([more info](${GITHUB_JOB_LINK}#step:${GITHUB_STEP_NUMBER}:1))<br />"    
     fi    
 
 done <<< "$PACKAGES"
