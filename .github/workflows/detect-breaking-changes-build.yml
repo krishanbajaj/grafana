@@ -86,41 +86,32 @@ jobs:
           name: buildMain
           path: './main'
 
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: './pr'
+      - name: Get link for the Github Action job
+        id: job
+        uses: actions/github-script@v5
+        with:
+          script: |
+              const script = require('./.github/workflows/scripts/pr-get-job-link.js')
+              await script({github, context, core})
 
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: './main'
+      - name: Detect breaking changes
+        id: breaking-changes
+        run: ./scripts/check-breaking-changes.sh 
+        env:
+          FORCE_COLOR: 3
+          GITHUB_JOB_LINK: ${{ steps.job.outputs.link }}
 
+      - name: Persisting the check output
+        run: |
+            mkdir -p ./levitate
+            echo "{ \"exit_code\": ${{ steps.breaking-changes.outputs.is_breaking }}, \"message\": \"${{ steps.breaking-changes.outputs.message }}\", \"job_link\": \"${{ steps.job.outputs.link }}#step:${GITHUB_STEP_NUMBER}:1\" }" > ./levitate/result.json
 
-    # - name: Get link for the Github Action job
-    #   id: job
-    #   uses: actions/github-script@v5
-    #   with:
-    #     script: |
-    #         const script = require('./.github/workflows/scripts/pr-get-job-link.js')
-    #         await script({github, context, core})
-
-    # - name: Detect breaking changes
-    #   id: breaking-changes
-    #   run: ./scripts/check-breaking-changes.sh 
-    #   env:
-    #     FORCE_COLOR: 3
-    #     GITHUB_JOB_LINK: ${{ steps.job.outputs.link }}
-
-    # - name: Persisting the check output
-    #   run: |
-    #       mkdir -p ./levitate
-    #       echo "{ \"exit_code\": ${{ steps.breaking-changes.outputs.is_breaking }}, \"message\": \"${{ steps.breaking-changes.outputs.message }}\", \"job_link\": \"${{ steps.job.outputs.link }}#step:${GITHUB_STEP_NUMBER}:1\" }" > ./levitate/result.json
-
-    # - name: Upload check output as artifact
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: levitate
-    #     path: levitate/
-      
-    # - name: Exit
-    #   run: exit ${{ steps.breaking-changes.outputs.is_breaking }}
-    #   shell: bash
+      - name: Upload check output as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: levitate
+          path: levitate/
+        
+      - name: Exit
+        run: exit ${{ steps.breaking-changes.outputs.is_breaking }}
+        shell: bash
