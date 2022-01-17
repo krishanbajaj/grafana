@@ -19,8 +19,8 @@ jobs:
       uses: actions/setup-node@v2.5.1
       with:
         node-version: '16'
-        # cache: 'yarn'
-        # cache-dependency-path: './pr/yarn-lock.json'
+        cache: 'yarn'
+        cache-dependency-path: './pr/yarn.lock'
       
     - name: Install dependencies
       run: yarn install --immutable
@@ -32,7 +32,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: buildPr
-        path: './pr'
+        path: './pr/packages/**/dist/'
 
   buildMain:
     name: Build Main
@@ -51,8 +51,8 @@ jobs:
       uses: actions/setup-node@v2.5.1
       with:
         node-version: '16'
-        # cache: 'yarn'
-        # cache-dependency-path: './main/yarn-lock.json'
+        cache: 'yarn'
+        cache-dependency-path: './main/yarn.lock'
       
     - name: Install dependencies
       run: yarn install --immutable
@@ -64,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: buildMain
-        path: './main'
+        path: './main/packages/**/dist/'
 
   Detect:
     name: Detect breaking changes
