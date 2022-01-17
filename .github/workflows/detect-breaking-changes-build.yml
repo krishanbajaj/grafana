@@ -20,7 +20,7 @@ jobs:
       with:
         node-version: '16'
         cache: 'yarn'
-        path: './pr'
+        cache-dependency-path: './pr/yarn-lock.json'
       
     - name: Install dependencies
       run: yarn install --immutable
@@ -52,7 +52,7 @@ jobs:
       with:
         node-version: '16'
         cache: 'yarn'
-        path: './main'
+        cache-dependency-path: './main/yarn-lock.json'
       
     - name: Install dependencies
       run: yarn install --immutable
