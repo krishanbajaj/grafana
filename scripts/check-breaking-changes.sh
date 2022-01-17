@@ -16,7 +16,7 @@ for package in "${PACKAGES[@]}"; do
     CURRENT="./pr/$PACKAGE_PATH/dist/"
 
     # Temporarily skipping @grafana/toolkit, as it doesn't have any exposed static typing
-    if [[ "$PACKAGE_PATH" == 'grafana-toolkit' ]]; then
+    if [[ "$PACKAGE_PATH" == 'grafana-toolkit' || "$PACKAGE_PATH" == 'jaeger-ui-components' ]]; then
         continue
     fi
 
