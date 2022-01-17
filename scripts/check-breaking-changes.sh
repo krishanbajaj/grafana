@@ -14,7 +14,7 @@ while IFS= read -r line; do
     PACKAGE_NAME="${ADDR[1]}"
 
     # Calculate current and previous package paths / names
-    PREV="./main/$PACKAGE_NAME/dist/"
+    PREV="./main/$PACKAGE_PATH/dist/"
     CURRENT="./pr/$PACKAGE_PATH/dist/"
 
     # Temporarily skipping @grafana/toolkit, as it doesn't have any exposed static typing
